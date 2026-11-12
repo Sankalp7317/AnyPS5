@@ -21,7 +21,6 @@ int APS5_VABI ucnv_toUChars();
 int APS5_VABI ucnv_toUnicode();
 int APS5_VABI ucurr_getName();
 int APS5_VABI ucurr_openISOCurrencies();
-int APS5_VABI uloc_addLikelySubtags();
 std::int32_t APS5_VABI uloc_canonicalize(const char* locale, char* result, std::int32_t capacity, std::int32_t* status);
 int APS5_VABI uloc_countAvailable();
 std::int32_t APS5_VABI uloc_forLanguageTag(const char* langtag, char* localeID, std::int32_t capacity, std::int32_t* parsedLength, std::int32_t* status);
@@ -34,10 +33,7 @@ std::int32_t APS5_VABI uloc_getKeywordValue(const char* locale, const char* keyw
                                           std::int32_t capacity, std::int32_t* status);
 std::int32_t APS5_VABI uloc_getLanguage(const char* locale, char* result, std::int32_t capacity, std::int32_t* status);
 std::int32_t APS5_VABI uloc_getScript(const char* locale, char* result, std::int32_t capacity, std::int32_t* status);
-int APS5_VABI uloc_minimizeSubtags();
 int APS5_VABI uloc_setKeywordValue();
-int APS5_VABI uloc_toLanguageTag();
-int APS5_VABI uloc_toUnicodeLocaleType();
 int APS5_VABI unorm2_getNFKCInstance();
 int APS5_VABI unorm2_getNFKDInstance();
 int APS5_VABI ures_getByKey();

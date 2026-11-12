@@ -4837,10 +4837,6 @@ int APS5_VABI _ZN6icu_6810UnicodeSet6retainEii_nid_postfix() {
     NotImplemented_nid_no_patch(__func__);
 }
 
-int APS5_VABI uloc_toUnicodeLocaleKey_nid_postfix() {
-    NotImplemented_nid_no_patch(__func__);
-}
-
 int APS5_VABI _ZN6icu_686UStackC1EPFvPvEPFa8UElementS4_ER10UErrorCode_nid_postfix() {
     NotImplemented_nid_no_patch(__func__);
 }
@@ -8340,10 +8336,6 @@ int APS5_VABI ucurr_getKeywordValuesForLocale_nid_postfix() {
 }
 
 int APS5_VABI _ZN6icu_6810UnicodeSetaSERKS0__nid_postfix() {
-    NotImplemented_nid_no_patch(__func__);
-}
-
-int APS5_VABI uloc_toLegacyType_nid_postfix() {
     NotImplemented_nid_no_patch(__func__);
 }
 

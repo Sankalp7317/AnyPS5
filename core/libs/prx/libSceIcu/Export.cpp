@@ -187,10 +187,6 @@ int APS5_VABI ucurr_openISOCurrencies() {
     NotImplemented_nid_no_patch(__func__);
 }
 
-int APS5_VABI uloc_addLikelySubtags() {
-    NotImplemented_nid_no_patch(__func__);
-}
-
 int APS5_VABI uloc_countAvailable() {
     NotImplemented_nid_no_patch(__func__);
 }
@@ -207,19 +203,7 @@ int APS5_VABI uloc_getDefault() {
     NotImplemented_nid_no_patch(__func__);
 }
 
-int APS5_VABI uloc_minimizeSubtags() {
-    NotImplemented_nid_no_patch(__func__);
-}
-
 int APS5_VABI uloc_setKeywordValue() {
-    NotImplemented_nid_no_patch(__func__);
-}
-
-int APS5_VABI uloc_toLanguageTag() {
-    NotImplemented_nid_no_patch(__func__);
-}
-
-int APS5_VABI uloc_toUnicodeLocaleType() {
     NotImplemented_nid_no_patch(__func__);
 }
 
