@@ -514,6 +514,21 @@ if(BUILD_TESTING)
 endif()
 
 target_sources(libSceIcu PRIVATE BreakIterator.cpp Data.cpp Configuration.cpp)
+target_sources(libSceIcu PRIVATE DataAccess.cpp)
+
+if(BUILD_TESTING)
+    add_test_executable(guest_icu_data_access_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/DataAccess.cpp)
+    target_include_directories(guest_icu_data_access_tests PRIVATE ${LIBS_INCLUDE_DIR})
+    target_compile_definitions(guest_icu_data_access_tests PRIVATE ANYPS5_ICU_PACKAGED_DATA="${icu_data_dir}/icudt78l.dat")
+    target_link_libraries(guest_icu_data_access_tests PRIVATE libSceIcu libc)
+    configure_windows_unwind(guest_icu_data_access_tests)
+    add_test(NAME guest_icu_data_access COMMAND guest_icu_data_access_tests)
+    set_tests_properties(guest_icu_data_access PROPERTIES TIMEOUT 30)
+    if(WIN32)
+        set_tests_properties(guest_icu_data_access PROPERTIES ENVIRONMENT_MODIFICATION
+            "PATH=path_list_prepend:$<TARGET_FILE_DIR:libSceIcu>;PATH=path_list_prepend:$<TARGET_FILE_DIR:libkernel>")
+    endif()
+endif()
 
 if(BUILD_TESTING)
     add_test_executable(guest_icu_break_iterator_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/BreakIterator.cpp)
