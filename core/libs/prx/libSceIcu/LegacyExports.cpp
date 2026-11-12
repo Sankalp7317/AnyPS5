@@ -7309,10 +7309,6 @@ int APS5_VABI _ZN6icu_6810ICUService21reInitializeFactoriesEv_nid_postfix() {
     NotImplemented_nid_no_patch(__func__);
 }
 
-int APS5_VABI ucnv_openStandardNames_nid_postfix() {
-    NotImplemented_nid_no_patch(__func__);
-}
-
 int APS5_VABI _ZN6icu_6810UnicodeSet13complementAllERKNS_13UnicodeStringE_nid_postfix() {
     NotImplemented_nid_no_patch(__func__);
 }
