@@ -175,6 +175,20 @@ void TestPropertyValues() {
     ExpectInt(u_getIntPropertyValue_nid_postfix(0x301, 0x100e), 2, "u_getIntPropertyValue(U+0301, NFC_QC)");
     ExpectInt(u_getIntPropertyValue_nid_postfix(0x41, 0), 1, "u_getIntPropertyValue(A, Alphabetic)");
     ExpectInt(u_getIntPropertyValue_nid_postfix(0x41, 0x6000), 0, "u_getIntPropertyValue(A, 0x6000)");
+
+    Expect(u_hasBinaryProperty_nid_postfix(0x1f600, 57) && !u_hasBinaryProperty_nid_postfix(0x41, 57), "u_hasBinaryProperty(Emoji)");
+    Expect(u_hasBinaryProperty_nid_postfix(0x1f600, 58) && !u_hasBinaryProperty_nid_postfix(0x23, 58), "u_hasBinaryProperty(Emoji_Presentation)");
+    Expect(u_hasBinaryProperty_nid_postfix(0x41, 56) && !u_hasBinaryProperty_nid_postfix(0x61, 56), "u_hasBinaryProperty(Changes_When_NFKC_Casefolded)");
+    ExpectInt(u_getIntPropertyValue_nid_postfix(0xfb01, 0x100f), 0, "u_getIntPropertyValue(U+FB01, NFKC_QC)");
+    ExpectInt(u_getIntPropertyValue_nid_postfix(0x41, 0x100f), 1, "u_getIntPropertyValue(A, NFKC_QC)");
+    ExpectInt(u_getIntPropertyValue_nid_postfix(0x93f, 0x1016), 4, "u_getIntPropertyValue(U+093F, InPC)");
+    ExpectInt(u_getIntPropertyValue_nid_postfix(0x915, 0x1017), 5, "u_getIntPropertyValue(U+0915, InSC)");
+    ExpectInt(u_getIntPropertyValue_nid_postfix(0x3042, 0x1018), 3, "u_getIntPropertyValue(U+3042, vo)");
+    ExpectInt(u_getIntPropertyValue_nid_postfix(0x41, 0x1018), 0, "u_getIntPropertyValue(A, vo)");
+    ExpectInt(u_getIntPropertyValue_nid_postfix(0x1f600, 57), 1, "u_getIntPropertyValue(U+1F600, Emoji)");
+    ExpectInt(u_getIntPropertyMaxValue_nid_postfix(0x1018), 3, "u_getIntPropertyMaxValue(vo)");
+    Expect(u_getIntPropertyMaxValue_nid_postfix(0x1016) > 4, "u_getIntPropertyMaxValue(InPC)");
+    Expect(u_getIntPropertyMaxValue_nid_postfix(0x1017) > 5, "u_getIntPropertyMaxValue(InSC)");
 }
 
 }
