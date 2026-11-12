@@ -38,4 +38,5 @@
 #include "ConverterHelpers.hpp"
 #include "RecoveredSignatures.hpp"
 #include "BreakIterator.hpp"
+#include "ResourceBundle.hpp"
 #include "Data.hpp"
