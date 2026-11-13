@@ -514,6 +514,20 @@ if(BUILD_TESTING)
 endif()
 
 target_sources(libSceIcu PRIVATE BreakIterator.cpp Data.cpp Configuration.cpp)
+target_sources(libSceIcu PRIVATE LocaleAvailability.cpp)
+
+if(BUILD_TESTING)
+    add_test_executable(guest_icu_locale_availability_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/LocaleAvailability.cpp)
+    target_include_directories(guest_icu_locale_availability_tests PRIVATE ${LIBS_INCLUDE_DIR})
+    target_link_libraries(guest_icu_locale_availability_tests PRIVATE libSceIcu libc)
+    configure_windows_unwind(guest_icu_locale_availability_tests)
+    add_test(NAME guest_icu_locale_availability COMMAND guest_icu_locale_availability_tests)
+    set_tests_properties(guest_icu_locale_availability PROPERTIES TIMEOUT 30)
+    if(WIN32)
+        set_tests_properties(guest_icu_locale_availability PROPERTIES ENVIRONMENT_MODIFICATION
+            "PATH=path_list_prepend:$<TARGET_FILE_DIR:libSceIcu>;PATH=path_list_prepend:$<TARGET_FILE_DIR:libkernel>")
+    endif()
+endif()
 
 if(BUILD_TESTING)
     add_test_executable(guest_icu_break_iterator_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/BreakIterator.cpp)
