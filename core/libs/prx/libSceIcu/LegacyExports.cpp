@@ -3906,10 +3906,6 @@ int APS5_VABI sceIcuLegacyUnknown_Mgt7OGGL2ks_nid_no_patch() {
 }
 APS5_EXPORT("Mgt7OGGL2ks", sceIcuLegacyUnknown_Mgt7OGGL2ks_nid_no_patch);
 
-int APS5_VABI ucnv_getAvailableName_nid_postfix() {
-    NotImplemented_nid_no_patch(__func__);
-}
-
 int APS5_VABI _ZN6icu_689BytesTrie4nextEi_nid_postfix() {
     NotImplemented_nid_no_patch(__func__);
 }
@@ -9775,10 +9771,6 @@ int APS5_VABI uhash_get_nid_postfix() {
 }
 
 int APS5_VABI _ZN6icu_6824ForwardCharacterIteratorC2ERKS0__nid_postfix() {
-    NotImplemented_nid_no_patch(__func__);
-}
-
-int APS5_VABI ucnv_countAvailable_nid_postfix() {
     NotImplemented_nid_no_patch(__func__);
 }
 
