@@ -267,10 +267,70 @@ void Api() {
 
 }
 
+std::vector<std::int32_t> Boundaries(void* iterator) {
+    std::vector<std::int32_t> found{ubrk_first(iterator)};
+    for (auto next = ubrk_next(iterator); next != -1; next = ubrk_next(iterator)) found.push_back(next);
+    return found;
+}
+
+void Rules() {
+    Context = "rules";
+    const std::u16string text = u"Hello 123 world";
+    std::int32_t status = 0;
+    auto* words = ubrk_open(1, "en", text.c_str(), -1, &status);
+    Expect(words && status <= 0, "word iterator");
+    Equal(ubrk_following(words, 0), 5, "first word ends at 5");
+    std::array<std::int32_t, 8> tags{};
+    status = 0;
+    const auto count = ubrk_getRuleStatusVec_nid_postfix(words, tags.data(), static_cast<std::int32_t>(tags.size()), &status);
+    Expect(status == 0 && count >= 1, "a word boundary has rule tags");
+    Equal(tags[0], ubrk_getRuleStatus(words), "the first tag is the rule status");
+    Expect(tags[0] >= 200 && tags[0] < 300, "a letter word has a letter tag");
+    status = 0;
+    Equal(ubrk_getRuleStatusVec_nid_postfix(words, nullptr, 0, &status), count, "rule tags preflight");
+    Equal(status, 15, "rule tags preflight overflows");
+
+    status = 0;
+    Expect(ubrk_getLocaleByType_nid_postfix(words, 0, &status) != nullptr && status == 0, "actual locale");
+    Expect(ubrk_getLocaleByType_nid_postfix(words, 1, &status) != nullptr && status == 0, "valid locale");
+    Expect(ubrk_getLocaleByType_nid_postfix(nullptr, 0, &status) == nullptr && status == 1, "null iterator has no locale");
+
+    status = 0;
+    const auto length = ubrk_getBinaryRules_nid_postfix(words, nullptr, 0, &status);
+    Expect(status == 0 && length > 0, "binary rules preflight");
+    std::vector<std::uint8_t> rules(static_cast<std::size_t>(length));
+    Equal(ubrk_getBinaryRules_nid_postfix(words, rules.data(), length, &status), length, "binary rules copy");
+    Equal(status, 0, "binary rules copy status");
+    std::array<std::uint8_t, 4> small{};
+    Equal(ubrk_getBinaryRules_nid_postfix(words, small.data(), 4, &status), length, "short binary rules buffer");
+    Equal(status, 15, "short binary rules buffer overflows");
+    status = 0;
+    ubrk_getBinaryRules_nid_postfix(nullptr, nullptr, 0, &status);
+    Equal(status, 1, "null iterator has no binary rules");
+
+    status = 0;
+    auto* reopened = ubrk_openBinaryRules_nid_postfix(rules.data(), length, text.c_str(), -1, &status);
+    Expect(reopened && status == 0, "iterator from binary rules");
+    Expect(Boundaries(reopened) == Boundaries(words), "binary rules break like the original");
+    ubrk_close(reopened);
+
+    std::array<std::uint8_t, 64> garbage{};
+    status = 0;
+    Expect(!ubrk_openBinaryRules_nid_postfix(garbage.data(), static_cast<std::int32_t>(garbage.size()), nullptr, 0, &status) && status > 0, "garbage rules are refused");
+    status = 0;
+    Expect(!ubrk_openBinaryRules_nid_postfix(rules.data(), -1, nullptr, 0, &status), "negative rules length");
+    Equal(status, 1, "negative rules length error");
+    status = 7;
+    Expect(!ubrk_openBinaryRules_nid_postfix(rules.data(), length, nullptr, 0, &status), "failing status opens nothing");
+    Equal(status, 7, "failing status preserved");
+    ubrk_close(words);
+}
+
 int main(int argc, char** argv) {
     if (argc == 2) Unicode(std::stoi(argv[1]));
     else {
         SourceExamples();
         Api();
+        Rules();
     }
 }

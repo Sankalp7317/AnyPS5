@@ -102,4 +102,39 @@ const char* APS5_VABI ubrk_getAvailable(std::int32_t index) {
     return ubrk_getAvailable_78(index);
 }
 
+std::int32_t APS5_VABI ubrk_getRuleStatusVec_nid_postfix(void* iterator, std::int32_t* fillInVec, std::int32_t capacity,
+                                                         std::int32_t* error) {
+    if (!iterator || !error) APS5_INVALID_ARG_EX;
+    auto status = static_cast<UErrorCode>(*error);
+    const auto count = ubrk_getRuleStatusVec_78(static_cast<UBreakIterator*>(iterator), fillInVec, capacity, &status);
+    *error = status;
+    return count;
+}
+
+const char* APS5_VABI ubrk_getLocaleByType_nid_postfix(const void* iterator, std::int32_t type, std::int32_t* error) {
+    if (!error) APS5_INVALID_ARG_EX;
+    auto status = static_cast<UErrorCode>(*error);
+    const auto* locale = ubrk_getLocaleByType_78(static_cast<const UBreakIterator*>(iterator), static_cast<ULocDataLocaleType>(type), &status);
+    *error = status;
+    return locale;
+}
+
+std::int32_t APS5_VABI ubrk_getBinaryRules_nid_postfix(void* iterator, std::uint8_t* binaryRules, std::int32_t rulesCapacity,
+                                                       std::int32_t* error) {
+    if (!error) APS5_INVALID_ARG_EX;
+    auto status = static_cast<UErrorCode>(*error);
+    const auto length = ubrk_getBinaryRules_78(static_cast<UBreakIterator*>(iterator), binaryRules, rulesCapacity, &status);
+    *error = status;
+    return length;
+}
+
+void* APS5_VABI ubrk_openBinaryRules_nid_postfix(const std::uint8_t* binaryRules, std::int32_t rulesLength, const char16_t* text,
+                                                 std::int32_t textLength, std::int32_t* error) {
+    if (!error) APS5_INVALID_ARG_EX;
+    auto status = static_cast<UErrorCode>(*error);
+    auto* iterator = ubrk_openBinaryRules_78(binaryRules, rulesLength, text, textLength, &status);
+    *error = status;
+    return iterator;
+}
+
 }

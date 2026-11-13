@@ -17,4 +17,8 @@ std::int8_t APS5_VABI ubrk_isBoundary(void*, std::int32_t);
 std::int32_t APS5_VABI ubrk_getRuleStatus(void*);
 std::int32_t APS5_VABI ubrk_countAvailable();
 const char* APS5_VABI ubrk_getAvailable(std::int32_t);
+std::int32_t APS5_VABI ubrk_getRuleStatusVec_nid_postfix(void*, std::int32_t*, std::int32_t, std::int32_t*);
+const char* APS5_VABI ubrk_getLocaleByType_nid_postfix(const void*, std::int32_t, std::int32_t*);
+std::int32_t APS5_VABI ubrk_getBinaryRules_nid_postfix(void*, std::uint8_t*, std::int32_t, std::int32_t*);
+void* APS5_VABI ubrk_openBinaryRules_nid_postfix(const std::uint8_t*, std::int32_t, const char16_t*, std::int32_t, std::int32_t*);
 }
