@@ -283,12 +283,10 @@ void Run() {
 
     for (const auto incoming : passing) {
         std::int32_t status = incoming;
-        RequireThrows([&] { uidna_openUTS46_nid_postfix(0, &status); });
+        auto* idna = uidna_openUTS46_nid_postfix(0, &status);
+        Require(idna != nullptr);
         Require(status == incoming);
-
-        status = incoming;
-        RequireThrows([&] { uidna_openUTS46_nid_postfix(0xffffffffu, &status); });
-        Require(status == incoming);
+        uidna_close_nid_postfix(idna);
     }
 
     RequireThrows([&] { uidna_openUTS46_nid_postfix(0, nullptr); });
@@ -296,9 +294,77 @@ void Run() {
 
 } // namespace UidnaOpenUTS46
 
+namespace UidnaConvert {
+
+using IcuRecoveredTest::Require;
+using IcuRecoveredTest::RequireThrows;
+
+namespace {
+
+constexpr std::int32_t BufferOverflow = 15;
+constexpr std::uint32_t EmptyLabel = 1;
+
+struct Info {
+    std::int16_t size = 16;
+    std::int8_t isTransitionalDifferent = 0x5a;
+    std::int8_t reservedB3 = 0x5a;
+    std::uint32_t errors = 0x5a5a5a5au;
+    std::int32_t reservedI2 = 0x5a5a5a5a;
+    std::int32_t reservedI3 = 0x5a5a5a5a;
+};
+
+static_assert(sizeof(Info) == 16);
+
+bool Equals(const char16_t* text, std::int32_t length, const char16_t* expected) {
+    std::int32_t index = 0;
+    for (; expected[index] != 0; ++index) {
+        if (index >= length || text[index] != expected[index]) return false;
+    }
+    return index == length && text[length] == 0;
+}
+
+}
+
+void Run() {
+    std::int32_t status = 0;
+    auto* idna = uidna_openUTS46_nid_postfix(0, &status);
+    Require(idna != nullptr && status == 0);
+
+    std::array<char16_t, 64> dest{};
+    Info info;
+    const char16_t* unicodeName = u"B\u00fccher.example";
+    auto length = uidna_nameToASCII_nid_postfix(idna, unicodeName, -1, dest.data(), static_cast<std::int32_t>(dest.size()), reinterpret_cast<UIDNAInfo*>(&info), &status);
+    Require(status == 0 && Equals(dest.data(), length, u"xn--bcher-kva.example"));
+    Require(info.size == 16 && info.errors == 0 && info.isTransitionalDifferent == 0 && info.reservedB3 == 0);
+    Require(info.reservedI2 == 0 && info.reservedI3 == 0);
+
+    info = Info{};
+    length = uidna_nameToUnicode_nid_postfix(idna, u"xn--bcher-kva.example", -1, dest.data(), static_cast<std::int32_t>(dest.size()), reinterpret_cast<UIDNAInfo*>(&info), &status);
+    Require(status == 0 && Equals(dest.data(), length, u"b\u00fccher.example") && info.errors == 0);
+
+    info = Info{};
+    std::array<char16_t, 4> small{};
+    length = uidna_nameToASCII_nid_postfix(idna, unicodeName, -1, small.data(), static_cast<std::int32_t>(small.size()), reinterpret_cast<UIDNAInfo*>(&info), &status);
+    Require(status == BufferOverflow && length == 21);
+
+    status = 0;
+    info = Info{};
+    length = uidna_nameToASCII_nid_postfix(idna, u"a..b", 4, dest.data(), static_cast<std::int32_t>(dest.size()), reinterpret_cast<UIDNAInfo*>(&info), &status);
+    Require(status == 0 && length >= 0 && (info.errors & EmptyLabel) != 0);
+
+    uidna_close_nid_postfix(idna);
+    RequireThrows([&] { uidna_close_nid_postfix(idna); });
+    status = 0;
+    info = Info{};
+    RequireThrows([&] { uidna_nameToASCII_nid_postfix(idna, unicodeName, -1, dest.data(), static_cast<std::int32_t>(dest.size()), reinterpret_cast<UIDNAInfo*>(&info), &status); });
+}
+
+} // namespace UidnaConvert
+
 void CheckIcuIdna() {
     UidnaClose::Run();
     UidnaNameToASCII::Run();
     UidnaNameToUnicode::Run();
     UidnaOpenUTS46::Run();
+    UidnaConvert::Run();
 }
