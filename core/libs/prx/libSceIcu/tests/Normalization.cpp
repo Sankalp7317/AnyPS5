@@ -78,6 +78,38 @@ void TestInstances() {
     ExpectInt(error, IllegalArgument, "unorm2_getInstance(empty name) status");
 }
 
+void TestCompatibilityInstances() {
+    std::int32_t error = Success;
+    const auto* nfkc = unorm2_getNFKCInstance(&error);
+    const auto* nfkd = unorm2_getNFKDInstance(&error);
+    const auto* casefold = unorm2_getNFKCCasefoldInstance_nid_postfix(&error);
+    ExpectInt(error, Success, "compatibility instances status");
+    Expect(nfkc != nullptr && nfkd != nullptr && casefold != nullptr, "compatibility instances");
+    Expect(nfkc != nfkd && nfkc != casefold && nfkc != Nfc(), "compatibility instances are distinct");
+    Expect(unorm2_getInstance_nid_postfix(nullptr, "nfkc", Compose, &error) == nfkc, "unorm2_getInstance(nfkc, compose)");
+    Expect(unorm2_getInstance_nid_postfix(nullptr, "nfkc", Decompose, &error) == nfkd, "unorm2_getInstance(nfkc, decompose)");
+    Expect(unorm2_getInstance_nid_postfix(nullptr, "nfkc_cf", Compose, &error) == casefold, "unorm2_getInstance(nfkc_cf, compose)");
+    ExpectInt(error, Success, "unorm2_getInstance(nfkc) status");
+
+    ExpectNormalized(nfkc, u"ﬁ", u"fi", "NFKC(fi ligature)");
+    ExpectNormalized(nfkc, u"①", u"1", "NFKC(circled one)");
+    ExpectNormalized(nfkd, u"é", u"é", "NFKD(U+00E9)");
+    ExpectNormalized(nfkd, u"½", u"1⁄2", "NFKD(one half)");
+    ExpectNormalized(casefold, u"ＡＢ", u"ab", "NFKC_Casefold(fullwidth AB)");
+    ExpectNormalized(casefold, u"Straße", u"strasse", "NFKC_Casefold(sharp s)");
+
+    Expect(unorm2_getInstance_nid_postfix(nullptr, "no-such-data", Compose, &error) == nullptr, "unorm2_getInstance(missing data)");
+    Expect(error > 0, "unorm2_getInstance(missing data) reports an error");
+
+    for (const std::int32_t incoming : {1, 7, 27}) {
+        error = incoming;
+        Expect(unorm2_getNFKCInstance(&error) == nullptr && error == incoming, "NFKC with failing status");
+        Expect(unorm2_getNFKDInstance(&error) == nullptr && error == incoming, "NFKD with failing status");
+        Expect(unorm2_getNFKCCasefoldInstance_nid_postfix(&error) == nullptr && error == incoming, "NFKC_Casefold with failing status");
+    }
+    ExpectThrow<std::invalid_argument>([] { unorm2_getNFKCInstance(nullptr); }, "unorm2_getNFKCInstance(null status)");
+}
+
 void TestNormalize() {
     const auto* nfc = Nfc();
     const auto* nfd = Nfd();
@@ -209,6 +241,7 @@ void TestCompare() {
 
 int main() {
     TestInstances();
+    TestCompatibilityInstances();
     TestNormalize();
     TestQueries();
     TestDecompositions();

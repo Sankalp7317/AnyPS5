@@ -3,7 +3,9 @@
 #include "unicode/unorm.h"
 #include "unicode/unorm2.h"
 #include <cstdint>
-#include <cstring>
+
+#undef unorm2_getNFKCInstance
+#undef unorm2_getNFKDInstance
 
 namespace {
 
@@ -62,13 +64,21 @@ const Icu::Normalizer2* APS5_VABI unorm2_getNFDInstance_nid_postfix(std::int32_t
     return Guest(unorm2_getNFDInstance(&Status(error)));
 }
 
+const Icu::Normalizer2* APS5_VABI unorm2_getNFKCInstance(std::int32_t* error) {
+    return Guest(unorm2_getNFKCInstance_78(&Status(error)));
+}
+
+const Icu::Normalizer2* APS5_VABI unorm2_getNFKDInstance(std::int32_t* error) {
+    return Guest(unorm2_getNFKDInstance_78(&Status(error)));
+}
+
+const Icu::Normalizer2* APS5_VABI unorm2_getNFKCCasefoldInstance_nid_postfix(std::int32_t* error) {
+    return Guest(unorm2_getNFKCCasefoldInstance(&Status(error)));
+}
+
 const Icu::Normalizer2* APS5_VABI unorm2_getInstance_nid_postfix(const char* package, const char* name, std::int32_t mode,
                                                                  std::int32_t* error) {
-    auto& status = Status(error);
-    if (U_SUCCESS(status) && name && *name && (package || std::strcmp(name, "nfc") != 0)) {
-        NotImplemented_nid_no_patch("unorm2_getInstance: normalization data file");
-    }
-    return Guest(unorm2_getInstance(package, name, static_cast<UNormalization2Mode>(mode), &status));
+    return Guest(unorm2_getInstance(package, name, static_cast<UNormalization2Mode>(mode), &Status(error)));
 }
 
 std::int32_t APS5_VABI unorm2_normalize_nid_postfix(const Icu::Normalizer2* normalizer, const char16_t* source,
